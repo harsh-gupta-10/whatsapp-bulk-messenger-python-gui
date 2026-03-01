@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 from urllib.parse import quote
 import os
@@ -81,12 +82,16 @@ def get_numbers() -> list:
 
 
 def get_driver():
-    """Initialize and return a Chrome WebDriver instance"""
+    """Initialize and return a Chrome WebDriver instance.
+    ChromeDriverManager auto-downloads the correct ChromeDriver on first run."""
     options = Options()
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_argument("--profile-directory=Default")
     options.add_argument("--user-data-dir=" + get_user_data_dir())
-    driver = webdriver.Chrome(service=Service(), options=options)
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=options
+    )
     return driver
 
 

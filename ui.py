@@ -2,9 +2,21 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, scrolledtext
 import threading
 import os
+import sys
 import time
 from automation_core import get_driver, send_messages
 from urllib.parse import quote
+
+
+def app_dir():
+    """Always returns the folder where the exe (or script) lives."""
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+MESSAGE_FILE = os.path.join(app_dir(), "message.txt")
+NUMBERS_FILE = os.path.join(app_dir(), "numbers.txt")
 
 # ── Palette ──────────────────────────────────────────────
 BG          = "#1a1a2e"   # deep navy background
@@ -208,15 +220,15 @@ class WhatsAppBulkMessengerUI:
 
     def load_default_message(self):
         try:
-            if os.path.exists("message.txt"):
-                self.message_text.insert("1.0", open("message.txt", encoding="utf8").read())
+            if os.path.exists(MESSAGE_FILE):
+                self.message_text.insert("1.0", open(MESSAGE_FILE, encoding="utf8").read())
         except Exception as e:
             print(e)
 
     def load_default_numbers(self):
         try:
-            if os.path.exists("numbers.txt"):
-                self.numbers_text.insert("1.0", open("numbers.txt").read())
+            if os.path.exists(NUMBERS_FILE):
+                self.numbers_text.insert("1.0", open(NUMBERS_FILE).read())
         except Exception as e:
             print(e)
 
@@ -249,8 +261,8 @@ class WhatsAppBulkMessengerUI:
             messagebox.showwarning("Empty", "Message is empty!"); return
         if not nums:
             messagebox.showwarning("Empty", "No phone numbers!"); return
-        open("message.txt", "w", encoding="utf8").write(msg)
-        open("numbers.txt", "w").write(nums)
+        open(MESSAGE_FILE, "w", encoding="utf8").write(msg)
+        open(NUMBERS_FILE, "w").write(nums)
         self.set_status("Files saved ✓")
 
     # ──────────────────────────────────────────────────────
